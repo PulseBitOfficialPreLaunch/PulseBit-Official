@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PulseBit Coin Presale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://i.imgur.com/oN2kLpY.png') repeat;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.65);
+      padding: 40px;
+      border-radius: 12px;
+      display: inline-block;
+      max-width: 600px;
+      box-shadow: 0 0 10px #00ff88;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      color: #ffd700;
+      text-shadow: 2px 2px #000;
+    }
+
+    h2 {
+      color: #00ff88;
+      margin-top: 0;
+    }
+
+    p, label {
+      font-size: 1.2em;
+      color: #eee;
+      text-shadow: 1px 1px #000;
+    }
+
+    input {
+      font-size: 1.1em;
+      padding: 8px;
+      width: 80px;
+      margin: 10px;
+      border-radius: 6px;
+      border: none;
+      text-align: center;
+    }
+
+    button {
+      background: #00ff88;
+      color: #000;
+      padding: 12px 24px;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    #timer {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    .quick-btns button {
+      width: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <h1>Are you ready for the <span style="color:#ff66cc;">PULSE</span>?</h1>
+    <div id="timer">Loading countdown...</div>
+
+    <label for="solInput">Enter SOL amount:</label><br>
+    <input type="number" id="solInput" value="1" step="0.01" min="0">
+    <p>You will receive: <span id="tokenOutput">10,000</span> PBC</p>
+
+    <div class="quick-btns">
+      <button onclick="quickBuy(0.1)">0.1 SOL</button>
+      <button onclick="quickBuy(0.5)">0.5 SOL</button>
+      <button onclick="quickBuy(1)">1 SOL</button>
+    </div>
+
+    <button onclick="copyAddress()">Copy Wallet Address</button>
+    <br>
+    <button onclick="connectWallet()">Connect Wallet (Optional)</button>
+
+    <p>Presale wallet: <strong id="walletAddress">WX9sczqdpn4hVSfuhgUtugozj-Q2UKoBFHQFxTJSzY8k</strong></p>
+    <p style="font-size: 0.9em;">1% of total supply is burned automatically every 2 days 🔥</p>
+  </div>
+
+  <script>
+    const walletAddress = document.getElementById("walletAddress").innerText;
+
+    function copyAddress() {
+      navigator.clipboard.writeText(walletAddress).then(() => {
+        alert("Wallet address copied to clipboard!");
+      });
+    }
+
+    function connectWallet() {
+      if ('solana' in window) {
+        const provider = window.solana;
+        if (provider.isPhantom) {
+          provider.connect().then(resp => {
+            alert(`Wallet connected: ${resp.publicKey.toString()}`);
+          }).catch(err => {
+            alert('Connection failed: ' + err.message);
+          });
+        }
+      } else {
+        alert('Please install Phantom Wallet to use this feature.');
+      }
+    }
+
+    const solInput = document.getElementById("solInput");
+    const tokenOutput = document.getElementById("tokenOutput");
+
+    solInput.addEventListener("input", () => {
+      const tokens = parseFloat(solInput.value) * 10000;
+      tokenOutput.innerText = tokens.toLocaleString();
+    });
+
+    function quickBuy(amount) {
+      solInput.value = amount;
+      const tokens = amount * 10000;
+      tokenOutput.innerText = tokens.toLocaleString();
+    }
+
+    // Countdown timer
+    const countdownTarget = new Date("June 1, 2025 00:00:00").getTime();
+    const timerElement = document.getElementById("timer");
+
+    setInterval(() => {
+      const now = new Date().getTime();
+      const distance = countdownTarget - now;
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      timerElement.innerHTML = `Presale Ends In: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+  </script>
+</body>
+</html>
